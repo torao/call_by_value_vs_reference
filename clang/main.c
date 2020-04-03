@@ -49,24 +49,6 @@ void bblsort_by_value(Data a[], size_t len) {
   }
 }
 
-void init(Data **data, size_t len) {
-  srand(82749522);
-  for (int i = 0; i < len; i++) {
-    data[i]->value = rand();
-  }
-}
-
-void validate(Data **data, size_t len) {
-  for (int i = 0; i + 1 < len; i++) {
-    if (compare_by_reference(data[i], data[i + 1]) > 0) {
-      printf("This is not in ascending order: [%d] %d > [%d] %d\n", i,
-             data[i]->value, i + 1, data[i + 1]->value);
-      return;
-    }
-  }
-  return;
-}
-
 #define LEN 10000
 int main(int argc, char **argv) {
   Data data1[LEN];
