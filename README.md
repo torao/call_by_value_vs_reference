@@ -20,9 +20,13 @@ ok      command-line-arguments  63.842s
 ## Results
 
 ```
-golang$ go run main.go
-by value    : 0.874962[sec]
-by reference: 0.221388[sec]
+golang$ go test -bench .
+goos: darwin
+goarch: amd64
+BenchmarkBubbleSort/CallByValue-8         1000000000         0.00722 ns/op
+BenchmarkBubbleSort/CallByReference-8     1000000000         0.00116 ns/op
+BenchmarkQuickSort/CallByValue-8          1000000000         0.000247 ns/op
+BenchmarkQuickSort/CallByReference-8      1000000000         0.000100 ns/op
 ```
 
 ```
