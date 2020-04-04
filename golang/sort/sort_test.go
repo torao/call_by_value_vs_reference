@@ -11,7 +11,7 @@ import (
 type Node struct {
 	P    int64
 	Data float64
-	Big [100]byte // to increase the cost of passing it as parameter
+	Big  [100]byte // to increase the cost of passing it as parameter
 }
 
 func (n Node) LessThanN(other Node) bool {
@@ -46,7 +46,7 @@ func NewItems(count int) ([]Node, []SortItem, []SortItemP) {
 	resultP := make([]SortItemP, count)
 	for i := 0; i < count; i++ {
 		resultN[i] = Node{
-			P: 100,
+			P:    100,
 			Data: rand.Float64(),
 		}
 		result[i] = resultN[i]
