@@ -37,11 +37,11 @@ void bblsort_by_reference(Data *a[], size_t len) {
   }
 }
 
-void bblsort_by_value(Data a[], size_t len) {
+void bblsort_by_value(Data *a[], size_t len) {
   for (int i = 0; i < len; i++) {
     for (int j = 1; j < len - i; j++) {
-      if (compare_by_value(a[j], a[j - 1]) < 0) {
-        Data tmp = a[j];
+      if (compare_by_value(*a[j], *a[j - 1]) < 0) {
+        Data *tmp = a[j];
         a[j] = a[j - 1];
         a[j - 1] = tmp;
       }
@@ -51,13 +51,13 @@ void bblsort_by_value(Data a[], size_t len) {
 
 #define LEN 10000
 int main(int argc, char **argv) {
-  Data data1[LEN];
+  Data *data1[LEN];
   Data *data2[LEN];
   srand(82749522);
   for (int i = 0; i < LEN; i++) {
     data2[i] = (Data *)malloc(sizeof(Data));
     data2[i]->value = rand();
-    data1[i] = *data2[i];
+    data1[i] = data2[i];
   }
 
   clock_t t0 = clock();

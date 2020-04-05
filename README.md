@@ -2,9 +2,10 @@
 
 Which is faster, a pointer or an entity?
 
-[egonspace's report](https://github.com/egonspace/simulations/blob/master/sort/sort_test.go) shows that the
-function calls in golang are faster for passing an entity with a copy than for passing a pointer. In fact,
-when I ran the program, I could see that call by value is faster than call by reference.
+egonspace [report](https://github.com/egonspace/simulations/blob/master/sort/sort_test.go)
+that the function calls in golang are faster for passing an entity with a copy than for passing
+a pointer. In fact, when I ran the program, I could see that call by value is faster than call
+by reference.
 
 ```
 golang$ go test sort_test.go -v
