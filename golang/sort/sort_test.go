@@ -1,92 +1,59 @@
 package sort
 
 import (
-	"fmt"
 	"math/rand"
 	"sort"
 	"testing"
-	"time"
 )
 
-type Node struct {
-	P    int64
-	Data float64
-	Big  [100]byte // to increase the cost of passing it as parameter
+type Entity struct {
+	Value   int
+	Payload [100]byte
 }
 
-func (n Node) LessThanN(other Node) bool {
-	return n.Data < other.Data
+type Image interface {
+	LessThanByImage(other Image) bool
+	LessThanByImageRef(other *Image) bool
 }
 
-func (n Node) Priority() int64 {
-	return n.P
+func (n Entity) LessThanByEntity(other Entity) bool {
+	return n.Value < other.Value
 }
 
-func (n Node) LessThan(other SortItem) bool {
-	return n.Data < other.(Node).Data
+func (n Entity) LessThanByImage(other Image) bool {
+	return n.Value < other.(Entity).Value
 }
 
-func (n Node) LessThanP(other *SortItemP) bool {
-	return n.Data < (*other).(Node).Data
+func (n Entity) LessThanByImageRef(other *Image) bool {
+	return n.Value < (*other).(Entity).Value
 }
 
-type SortItem interface {
-	Priority() int64
-	LessThan(other SortItem) bool
-}
-
-type SortItemP interface {
-	Priority() int64
-	LessThanP(other *SortItemP) bool
-}
-
-func NewItems(count int) ([]Node, []SortItem, []SortItemP) {
-	resultN := make([]Node, count)
-	result := make([]SortItem, count)
-	resultP := make([]SortItemP, count)
+func BenchmarkQuickSort(b *testing.B) {
+	count := 800000
+	nodesE := make([]Entity, count)
+	nodes1 := make([]Image, count)
+	nodes2 := make([]Image, count)
 	for i := 0; i < count; i++ {
-		resultN[i] = Node{
-			P:    100,
-			Data: rand.Float64(),
-		}
-		result[i] = resultN[i]
-		resultP[i] = resultN[i]
+		nodesE[i] = Entity{Value: int(rand.Int31())}
+		nodes1[i] = nodesE[i]
+		nodes2[i] = nodesE[i]
 	}
-	return resultN, result, resultP
-}
 
-func TestSort(t *testing.T) {
-	nodesN, nodes, nodesP := NewItems(10000000)
-
-	var start, end time.Time
-	start = time.Now()
-	sort.Slice(nodesN, func(i, j int) bool {
-		if nodesN[i].Priority() != nodesN[j].Priority() {
-			return nodesN[i].Priority() < nodesN[j].Priority()
-		}
-		return nodesN[i].LessThanN(nodesN[j])
-	})
-	end = time.Now()
-	fmt.Printf("sort time(structure) = %f\n", end.Sub(start).Seconds())
-
-	start = time.Now()
-	sort.Slice(nodes, func(i, j int) bool {
-		if nodes[i].Priority() != nodes[j].Priority() {
-			return nodes[i].Priority() < nodes[j].Priority()
-		}
-		return nodes[i].LessThan(nodes[j])
+	b.Run("Entity", func(b *testing.B) {
+		sort.Slice(nodesE, func(i, j int) bool {
+			return nodesE[i].LessThanByEntity(nodesE[j])
+		})
 	})
 
-	end = time.Now()
-	fmt.Printf("sort time(interface) = %f\n", end.Sub(start).Seconds())
-
-	start = time.Now()
-	sort.Slice(nodesP, func(i, j int) bool {
-		if nodesP[i].Priority() != nodesP[j].Priority() {
-			return nodesP[i].Priority() < nodesP[j].Priority()
-		}
-		return nodesP[i].LessThanP(&nodesP[j])
+	b.Run("Image", func(b *testing.B) {
+		sort.Slice(nodes1, func(i, j int) bool {
+			return nodes1[i].LessThanByImage(nodes1[j])
+		})
 	})
-	end = time.Now()
-	fmt.Printf("sort time(*interface) = %f\n", end.Sub(start).Seconds())
+
+	b.Run("ImageRef", func(b *testing.B) {
+		sort.Slice(nodes2, func(i, j int) bool {
+			return nodes2[i].LessThanByImageRef(&nodes2[j])
+		})
+	})
 }
